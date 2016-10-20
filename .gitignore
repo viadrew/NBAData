@@ -1,0 +1,13 @@
+#Python and PyCharm
+.idea
+env/
+*.pyc
+__py_cache__/
+
+#Mac OS
+.DS_STORE
+
+#
+raw_data/
+data/
+
