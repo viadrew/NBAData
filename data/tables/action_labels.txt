@@ -1,0 +1,69 @@
+01.02.2016.HOU.at.SAS (1,4)
+- http://nbareplaytv.com/houston-rockets-vs-san-antonio-spurs-jan-02-2016/
+
+01.04.2016.CHA.at.GSW (2,3)
+- http://nbareplaytv.com/charlotte-hornets-vs-golden-state-warriors-jan-04-2016/
+- http://www.nba.com/games/20160104/CHAGSW/gameinfo.html
+
+    Second quarter
+      - 11:52 CHA ; Kaminsky M.Williams ; handoff
+      - 11:32 GSW ; Speights Barnes ; switch
+      - 11:19 CHA; Kaminsky Brian Roberts; over, wasn't used / ICE
+      - 11:10 CHA; Hawes Roberts; under, help
+      - 10:52 GSW; Speights Ian Clark; over, back up
+      - 10:36 CHA; Kaminsky Roberts; switch
+      - 10:06 GSW; Speights Barnes; switch
+      - 9:53 CHA; Kaminsky M.Williams; switch ?????????? no dribbling / slip
+      - 9:37 GSW; Barnes Speights; double (went other way)
+      - 9:24 CHA; Hawes Lamb; went other way ---- probably not
+      - 8:22 CHA; Hawes Lamb; over
+      - 8:00 GSW; Green Curry; trap
+      - 7:48 CHA; Williams/Kaminsky Roberts; switch ---- probably not
+      - 7:39 CHA; Kaminsky Roberts; (trap) switch
+      - 7:14 CHA; Hawes Roberts; over
+      - 6:43 CHA; Hawes Roberts; under
+      - 6:19 CHA; Hawes Roberts; over
+      - 5:57 GSW; Bogut Curry; no
+      - 5:47 GSW; Dray Curry; over
+      - 5:10-5:05 GSW ; handoffs
+      - 5:04 GSW; Bogut Curry; over; show(trap)
+      - 4:12 CHA; Zeller Kemba; over (trap / funnel)
+      - 3:25 CHA; Williams Kemba; under - switch
+      - 3:00 CHA; Zeller Kemba; under (help defender sag)
+      - 2:45 CHA; Zeller Kemba; over
+	- 2:03 CHA; williams? kemba; switch
+      - 1:40 CHA; Kaminsky Lamb; switch
+      - 1:31 CHA; Kaminsky Kemba; switch
+      - 1:29 CHA; Zeller Kemba;  trap
+      - 1:14 GSW; Green Curry; trap
+      - 0:48 GSW; Ezili Curry; switch
+      - 0:086; Zeller Kemba; switch
+
+    Third Quarter
+    - 
+
+01.13.2016.GSW.at.DEN (1,4)
+- http://nbareplaytv.com/golden-state-warriors-vs-denver-nuggets-jan-13-2016/
+
+01.15.2016.CLE.at.HOU (1,3)
+- http://nbareplaytv.com/cleveland-cavaliers-vs-houston-rockets-jan-15-2016/
+
+01.18.2016.HOU.at.LAC (1,2)
+- http://nbareplaytv.com/houston-rockets-vs-los-angeles-clippers-jan-18-2016/
+
+01.20.2016.BOS.at.TOR (3,4)
+- http://nbareplaytv.com/boston-celtics-vs-toronto-raptors-jan-20-2016/
+
+
+12.29.2015.CLE.at.DEN (1,2)
+- http://nbareplaytv.com/cleveland-cavaliers-vs-denver-nuggets-december-29-2015/
+
+12.30.2015.LAC.at.CHA (3,4)
+- http://nbareplaytv.com/los-angeles-clippers-vs-charlotte-hornets-dec-30-2015/
+
+#not downloadable
+12.09.2015.SAS.at.TOR (2,4)
+- http://nbareplaytv.com/toronto-raptors-vs-san-antonio-spurs-dec-9-2015/
+
+12.12.2015.BOS.at.CHA (1,3)
+- http://nbareplaytv.com/boston-celtics-vs-charlotte-horhornets-dec-12-2015/
