@@ -21,7 +21,8 @@ def get_actions(events, quarter1, quarter2):
         for j, moment in enumerate(quarter_events):
             # Use for debug
             m, s = divmod(moment.game_clock, 60)
-            print('{:d}:{:.2f}'.format(int(m), s))
+
+            #print('{:d}:{:.2f}'.format(int(m), s))
 
             # Retrieve data
             sorted_players = sorted(moment.players, key=lambda player: player.team.id)
