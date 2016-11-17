@@ -1,20 +1,28 @@
 import math
 from shapely.geometry import Point, Polygon
-from src.game.Action import Action
+from sportvu.game.Action import Action
 
-# Main utility function
-def get_actions(events):
+# By Rule Algorithm
+def get_actions(events, quarter1, quarter2):
     '''Data extraction of 'actions' according to rule-based algorithm'''
 
     actions = []
 
     for i, event in enumerate(events):
+        #Skip events that are not in desired quarters
+        #Later process everything, handle quarter in csv read
+        quarter_events = [qe for qe in event.moments if qe.quarter in [quarter1, quarter2]]
+
         ball_handler = None
         is_action = False
         positive_condition_counter = 0
         start_moment = None
 
-        for j, moment in enumerate(event.moments):
+        for j, moment in enumerate(quarter_events):
+            # Use for debug
+            m, s = divmod(moment.game_clock, 60)
+            print('{:d}:{:.2f}'.format(int(m), s))
+
             # Retrieve data
             sorted_players = sorted(moment.players, key=lambda player: player.team.id)
             home_players = sorted_players[:5]
@@ -40,7 +48,6 @@ def get_actions(events):
                 def_players = home_players
 
             curr_ball_handler = get_ballhandler(ball, off_players)
-            get_ballhandler(ball, def_players)
 
             # Time for the rule based algorithm ...
             if rule_algo(moment, off_players, def_players, ball, curr_ball_handler, half, is_home):
@@ -49,17 +56,21 @@ def get_actions(events):
                     positive_condition_counter += 1
                     ball_handler = curr_ball_handler
                     start_moment = j
+
+               # St ill passed rule algo
                 elif (curr_ball_handler.id == ball_handler.id):
-                    positive_condition_counter +=1
+                    positive_condition_counter += 1
+                ball_handler = curr_ball_handler
 
                 if positive_condition_counter >= 13:
                     # Action detected
                     if not is_action:
                         is_action = True
+                        # print('Action at Q{}, {:d}:{:.2f}'.format(moment.quarter, int(m), s))
             else:
                 if positive_condition_counter >= 13:
                     # Add action to actions list
-                    action = Action(event, i, start_moment, positive_condition_counter)
+                    action = Action(event, i, start_moment, positive_condition_counter, ball_handler)
 
                     if len(actions) is 0:
                         actions.append(action)
@@ -69,11 +80,17 @@ def get_actions(events):
                         if not duplicate:
                             actions.append(action)
 
-                    is_action = False
+                is_action = False
                 positive_condition_counter = 0
+
     return actions
 
-# Utility for get_actions
+# Extract features from the actions
+#def extract_features():
+    #speed (ds - d1) / s , (dn - ds) / (n-s)
+    #average speed
+
+# Helper functions
 def get_ballhandler(ball, players):
     ''' Returns the likely ball handler among offensive players if any'''
 
@@ -84,7 +101,15 @@ def get_ballhandler(ball, players):
         return None
     elif len(potential_bh) == 1:
         return potential_bh[0][0]
-    return max(potential_bh, key=lambda x: x[1])[0]
+    # else:
+
+        # Minimize false negatives (i.e. 1 frame of wrong ballhandler)
+    return min(potential_bh, key=lambda x: x[1])[0]
+
+class Basket():
+    def __init__(self, half):
+        self.x = 5.25 if half is 1 else 88.75
+        self.y = 25
 
 def get_distance(object1, object2):
     ''' Return the distance between two trackable objects (player(s) or ball '''
@@ -93,7 +118,7 @@ def get_distance(object1, object2):
 def get_off_team(ball, half):
     ''' Used to determine the offensive team based on ball location and current half '''
 
-    left_half = Polygon([(0, 0), (0, 50), (47, 50), (47, 0)])
+    left_half = Polygon([(0, 0), (0, 52), (47, 52), (47, 0)])
     ball_xy = Point(ball.x, ball.y)
 
     return left_half.contains(ball_xy) and half == 1
@@ -113,6 +138,9 @@ def is_in_paint(player, ball, half, is_home):
 
 def rule_algo(moment, off_players, def_players, ball, curr_ball_handler, half, is_home):
     ''' Rule algorithm as outlined in paper; '''
+
+    #Use for debug
+    m, s = divmod(moment.game_clock, 60)
 
     # Check state after every rule and return at False, as future rules may depend on previous to be true:
     # 1: There is a player handling the ball
@@ -135,12 +163,14 @@ def rule_algo(moment, off_players, def_players, ball, curr_ball_handler, half, i
         return False
 
     # 4: Screener is no more than 2ft. further from the basket than the ball handler is
-    distance_to_basket = abs(get_distance(curr_ball_handler, ball) - get_distance(likely_screener, ball))
-    condition4 = distance_to_basket <= 4 #3.2, 3.4, 3,5
-
+    basket = Basket(half)
+    distance_to_basket = abs(get_distance(curr_ball_handler, basket) - get_distance(likely_screener, basket))
+    condition4 = distance_to_basket <= 4.5 #5.0
 
     if not condition4:
         return False
+
+    # print('{:d}:{:.2f}'.format(int(m), s))
 
     # 5: There is a defender <= 12 ft from ball handler (on-ball defender),
     defenders = [defender for defender in def_players if get_distance(defender, curr_ball_handler) <= 12]
@@ -148,8 +178,5 @@ def rule_algo(moment, off_players, def_players, ball, curr_ball_handler, half, i
 
     # determine likely defender for future
     #likely_defender = min(defenders, key=lambda x: get_distance(x, curr_ball_handler))
-    if not condition5:
-        return False
-
-    return True
+    return condition5
 

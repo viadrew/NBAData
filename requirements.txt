@@ -1,0 +1,10 @@
+beautifulsoup4==4.5.1
+matplotlib==1.5.3
+numpy==1.11.2
+pandas==0.19.0
+pyparsing==2.1.9
+python-dateutil==2.6.0
+pytz==2016.7
+requests==2.12.1
+Shapely==1.5.17
+six==1.10.0
