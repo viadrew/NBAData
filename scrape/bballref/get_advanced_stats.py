@@ -58,25 +58,17 @@ def scrape(url, filename):
     # Team TOT will always be first
     players = {}
     duplicates = []
-
     for index, row in enumerate(data):
-        if row[0] not in players:
-            players[row[0]] = []
-            players[row[0]].append(index)
+        tup = (row[0], row[1], row[2])
+        if (tup) not in players:
+            players[tup] = index
         else:
-            players[row[0]].append(index)
+            tot_index = players[tup]
+            if data[tot_index][3] == 'TOT':
+                data[tot_index][3] = data[index][3]
+            else:
+                data[tot_index][3] = data[tot_index][3] + ' / ' + data[index][3]
             duplicates.append(index)
-
-    players_multiple = {key: value for key, value in players.items() if len(value) > 1}
-
-    # Replace Team value of 'TOT' to all teams player played for
-    for key, value in players_multiple.items():
-        team_str= data[value[1]][3]
-
-        for v in value[2:]:
-            team_str = team_str + ' / ' + data[v][3]
-
-        data[value[0]][3] = team_str
 
     # Remove the separated data
     data = [row for i, row in enumerate(data) if i not in duplicates]
