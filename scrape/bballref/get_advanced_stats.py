@@ -16,12 +16,17 @@ from bs4 import BeautifulSoup
 from collections import deque
 from distutils.dir_util import mkpath
 import optparse
-import os
+from os.path import abspath, dirname, join
 import pandas as pd
 import requests
 import re
 
-def scrape(url, filename):
+def scrape(year):
+    url = 'http://www.basketball-reference.com/leagues/NBA_' + year + '_advanced.html'
+
+    ROOT_DIR = dirname(dirname(dirname(abspath(__file__))))
+    filename = join(ROOT_DIR, 'data/bballref/players_advanced_' + year + '.csv')
+
     try:
         res = requests.get(url)
         soup = BeautifulSoup(res.content, 'html.parser')
@@ -85,17 +90,9 @@ if __name__ == '__main__':
     # Parse command line option
     p = optparse.OptionParser()
     p.add_option('-y', '--year', action='store', help='Season to pull data from')
-    p.add_option('-o', '--output_dir', action='store', dest='output_dir', help='output directory name')
     opt, args = p.parse_args()
 
     # Get args
     year = opt.year
-    output_dir = opt.output_dir
 
-     # Check if output directory exists; if not, create it
-    if not os.path.exists(output_dir):
-        mkpath(output_dir)
-
-    url = 'http://www.basketball-reference.com/leagues/NBA_' + year + '_advanced.html'
-    filename = os.path.join(output_dir,'advanced_player_stats_' + year + '.csv')
-    scrape(url, filename)
+    scrape(year)
