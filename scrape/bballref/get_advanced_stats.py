@@ -8,20 +8,18 @@
 # Usage: python get_advanced_stats.py -y 2017 -o data/
 #
 # Author: Andrew Hong
-# Last Updated: 2016-11-20
+# Last Updated: 2016-11-23
 #
 ################################################################################
 
 from bs4 import BeautifulSoup
 from collections import deque
 from distutils.dir_util import mkpath
-import csv
 import optparse
 import os
 import pandas as pd
 import requests
 import re
-import sys
 
 def scrape(url, filename):
     try:
@@ -39,35 +37,56 @@ def scrape(url, filename):
     # Remove 'Rk'; not parsed in 'td'
     headers = headers[1:]
 
-    # Write headers
-    with open(filename, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(headers)
+    # Add all data to a queue, then pop a row's worth of data into an list to be stored in another list
+    raw_data = deque()
+    data = []
 
-    # Add all data to a queue, then pop a row's worth of data into another queue and write the row to csv
-    data = deque()
-    row_data = deque(maxlen=len(headers))
+    for row in rows[1:]:
+        cols = row.findAll('td')
 
-    with open(filename, 'a') as f:
-        writer = csv.writer(f)
+        for col in cols:
+            text = col.find(text=True)
+            raw_data.append(text)
 
-        for row in rows[1:]:
-            cols = row.findAll('td')
+    while not not raw_data:
+        tmp = []
+        for i in range(len(headers)):
+            tmp.append(raw_data.popleft())
+        data.append(tmp)
 
-            for col in cols:
-                text = col.find(text=True)
-                data.append(text)
+    # Remove split data of players (due to trades etc)
+    # Team TOT will always be first
+    players = {}
+    duplicates = []
 
+    for index, row in enumerate(data):
+        if row[0] not in players:
+            players[row[0]] = []
+            players[row[0]].append(index)
+        else:
+            players[row[0]].append(index)
+            duplicates.append(index)
 
-        while not not data:
-            for i in range(len(headers)):
-                row_data.append(data.popleft())
-            writer.writerow(row_data)
+    players_multiple = {key: value for key, value in players.items() if len(value) > 1}
 
-    # Get rid of empty columns
+    # Replace Team value of 'TOT' to all teams player played for
+    for key, value in players_multiple.items():
+        team_str= data[value[1]][3]
+
+        for v in value[2:]:
+            team_str = team_str + ' / ' + data[v][3]
+
+        data[value[0]][3] = team_str
+
+    # Remove the separated data
+    data = [row for i, row in enumerate(data) if i not in duplicates]
+
+    # To dataframe, to easily remove empty columns
+    f = pd.DataFrame.from_records(data, columns=headers)
     parsed_headers = [h for h in headers if not re.search(h.string, u'\xc2\xa0')]
-    f = pd.read_csv(filename)
     new_f = f[parsed_headers]
+
+    # Write final to csv
     new_f.to_csv(filename, index=False)
 
 if __name__ == '__main__':
@@ -86,5 +105,5 @@ if __name__ == '__main__':
         mkpath(output_dir)
 
     url = 'http://www.basketball-reference.com/leagues/NBA_' + year + '_advanced.html'
-    filename = os.path.join(output_dir,'test' + year + '.csv')
+    filename = os.path.join(output_dir,'advanced_player_stats_' + year + '.csv')
     scrape(url, filename)
