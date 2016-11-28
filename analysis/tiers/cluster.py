@@ -1,15 +1,9 @@
+from analysis.tiers.scrape import scrape
 from sklearn.cluster import KMeans
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.metrics import silhouette_score
-
-from scipy import stats
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-
 import json
 import math
+import matplotlib.pyplot as plt
+import pandas as pd
 
 # Elbow Method for determining k
 def elbow_method(cluster_data):
@@ -27,26 +21,19 @@ def elbow_method(cluster_data):
 def clusters_to_json(player_clusters):
     players_grouped = player_clusters.groupby('tier')
     tiers_dict = players_grouped.mean().sum(axis=1).rank(ascending=False) - 1
-
-    tiers= [1,2,3,4,5,6,7,8,9,10,11]
-
-
-    players_dict = {}
-
-    # for r in players_grouped:
-    #     players_dict[TIER_NAMES[int(tiers_dict[int(r[0])])]] = 'test'
-
-
+    tiers = list(range(1,len(tiers_dict) + 1))
+    print(list(players_grouped))
     players_dict = list(map(lambda x:{'tier':tiers[int(tiers_dict[int(x[0])])], 'players':list(map(
         lambda x: x , x[1]['name']))}, players_grouped))
     return json.dumps(players_dict)
 
 def cluster(year):
     # Load data
-    df = pd.read_csv('./../../data/bballref/players_advanced_2017.csv')
+    df = pd.read_csv('./../../data/bballref/players_advanced_' + year + '.csv')
 
     # NBA statistical minimums is usually 58 games (>70%)
     data = df[ df['G'] >= (0.7 * df['G'].max())]
+    df = data
     names = data['Player']
 
     # Remove irrelevant data for clustering (player, position, age, team)
@@ -65,11 +52,14 @@ def cluster(year):
 
     clstr = KMeans(n_clusters=num_clusters)
     clstr.fit(data)
-    data['tier'] = clstr.labels_
-    data['name'] = names
-    return clusters_to_json(data)
+    df['tier'] = clstr.labels_
+    df['name'] = names
+    return clusters_to_json(df)
 
 if __name__ == '__main__':
-    result = cluster(1)
+    season = '2017'
+
+    scrape(season)
+    result = cluster(season)
 
     print(result)

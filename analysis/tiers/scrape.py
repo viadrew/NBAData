@@ -5,7 +5,7 @@
 #
 # Script to retrieve advanced stats of all players in a season
 #
-# Usage: python get_advanced_stats.py -y 2017 -o data/
+# Usage: python scrape.py -y 2017 -o data/
 #
 # Author: Andrew Hong
 # Last Updated: 2016-11-23
@@ -85,14 +85,3 @@ def scrape(year):
 
     # Write final to csv
     new_f.to_csv(filename, index=False)
-
-if __name__ == '__main__':
-    # Parse command line option
-    p = optparse.OptionParser()
-    p.add_option('-y', '--year', action='store', help='Season to pull data from')
-    opt, args = p.parse_args()
-
-    # Get args
-    year = opt.year
-
-    scrape(year)
